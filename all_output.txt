@@ -1,0 +1,210 @@
+To create an HTML calculator with a cool color scheme and a server with Node.js on port 8000, we will need the following files:
+
+1. `index.html`: This file will contain the HTML structure of the calculator.
+2. `styles.css`: This file will contain the CSS styles for the calculator, including the cool color scheme.
+3. `script.js`: This file will contain the JavaScript logic for the calculator.
+4. `server.js`: This file will contain the Node.js server code.
+5. `package.json`: This file will contain the Node.js project metadata and dependencies.
+
+Let's start with the `index.html` file:
+
+index.html
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="display" disabled>
+        <div class="buttons">
+            <button class="digit">7</button>
+            <button class="digit">8</button>
+            <button class="digit">9</button>
+            <button class="operator">+</button>
+            <button class="digit">4</button>
+            <button class="digit">5</button>
+            <button class="digit">6</button>
+            <button class="operator">-</button>
+            <button class="digit">1</button>
+            <button class="digit">2</button>
+            <button class="digit">3</button>
+            <button class="operator">*</button>
+            <button class="digit">0</button>
+            <button class="clear">C</button>
+            <button class="equal">=</button>
+            <button class="operator">/</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+```
+
+Next, the `styles.css` file:
+
+styles.css
+```css
+body {
+    background-color: #282a36;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.calculator {
+    border: 1px solid #44475a;
+    border-radius: 5px;
+    padding: 20px;
+    width: 200px;
+}
+
+.display {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: none;
+    text-align: right;
+    background-color: #44475a;
+    color: white;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+button {
+    padding: 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 20px;
+}
+
+.digit {
+    background-color: #6272a4;
+}
+
+.operator {
+    background-color: #8be9fd;
+}
+
+.clear, .equal {
+    background-color: #ff5555;
+    grid-column: span 2;
+}
+```
+
+Then, the `script.js` file:
+
+script.js
+```javascript
+const display = document.querySelector('.display');
+const digits = document.querySelectorAll('.digit');
+const operators = document.querySelectorAll('.operator');
+const clear = document.querySelector('.clear');
+const equal = document.querySelector('.equal');
+
+digits.forEach(button => button.addEventListener('click', digitClicked));
+operators.forEach(button => button.addEventListener('click', operatorClicked));
+clear.addEventListener('click', clearClicked);
+equal.addEventListener('click', equalClicked);
+
+let operand1 = '';
+let operand2 = '';
+let operator = '';
+
+function digitClicked(event) {
+    if (operator) {
+        operand2 += event.target.innerText;
+    } else {
+        operand1 += event.target.innerText;
+    }
+    display.value = operand1 + operator + operand2;
+}
+
+function operatorClicked(event) {
+    if (operand1 && operand2) {
+        calculate();
+    }
+    operator = event.target.innerText;
+    display.value = operand1 + operator + operand2;
+}
+
+function clearClicked() {
+    operand1 = '';
+    operand2 = '';
+    operator = '';
+    display.value = '';
+}
+
+function equalClicked() {
+    if (operand1 && operand2) {
+        calculate();
+        operator = '';
+    }
+}
+
+function calculate() {
+    switch (operator) {
+        case '+':
+            operand1 = String(Number(operand1) + Number(operand2));
+            break;
+        case '-':
+            operand1 = String(Number(operand1) - Number(operand2));
+            break;
+        case '*':
+            operand1 = String(Number(operand1) * Number(operand2));
+            break;
+        case '/':
+            operand1 = String(Number(operand1) / Number(operand2));
+            break;
+    }
+    operand2 = '';
+    display.value = operand1;
+}
+```
+
+Next, the `server.js` file:
+
+server.js
+```javascript
+const express = require('express');
+const path = require('path');
+const app = express();
+const port = 8000;
+
+app.use(express.static(path.join(__dirname)));
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
+```
+
+Finally, the `package.json` file:
+
+package.json
+```json
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "A simple calculator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
+```
+
+To run the server, you need to install the dependencies with `npm install` and then start the server with `npm start`. The calculator will be available at `http://localhost:8000`.
